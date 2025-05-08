@@ -1,10 +1,9 @@
 <template>
   <div>
-    <nav v-if="$route.name !== 'login'">
-      <button @click="$router.push('/dashboard')">Кабинет</button>
-      <button @click="handleLogout">Выйти</button>
-    </nav>
-    <router-view/>
+    <h1>Личный кабинет</h1>
+    <p>Email: {{ user?.email }}</p>
+    <p>Роль: {{ user?.role }}</p>
+    <button @click="logout">Выйти</button>
   </div>
 </template>
 
@@ -15,7 +14,9 @@ import { useRouter } from 'vue-router'
 const authStore = useAuthStore()
 const router = useRouter()
 
-const handleLogout = () => {
+const user = authStore.user
+
+const logout = () => {
   authStore.logout()
   router.push('/login')
 }

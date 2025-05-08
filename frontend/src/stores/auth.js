@@ -32,6 +32,11 @@ export const useAuthStore = defineStore('auth', {
           console.error('Login error:', error.response?.data || error.message)
           throw error  // Пробрасываем ошибку для обработки в компоненте
         }
+    },
+    logout() {
+      this.user = null
+      this.token = null
+      localStorage.removeItem('token')
     }
   }
 })
