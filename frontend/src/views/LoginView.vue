@@ -1,18 +1,33 @@
 <template>
-  <div class="login-form">
-    <h2>Вход в систему</h2>
-    <form @submit.prevent="handleLogin">
-      <div>
+  <div class="card">
+    <h1>Вход в систему</h1>
+    <form @submit.prevent="handleLogin" class="form">
+      <div class="form-group">
         <label>Email:</label>
-        <input v-model="email" type="email" required />
+        <input 
+          v-model="email" 
+          type="email" 
+          class="form-control" 
+          required 
+          placeholder="Введите email"
+        >
       </div>
-      <div>
+      <div class="form-group">
         <label>Пароль:</label>
-        <input v-model="password" type="password" required />
+        <input
+          v-model="password"
+          type="password"
+          class="form-control"
+          required
+          placeholder="Введите пароль"
+        >
       </div>
-      <button type="submit">Войти</button>
-      <p v-if="error" class="error">{{ error }}</p>
+      <button type="submit" class="btn btn-primary">Войти</button>
+      <p v-if="error" class="error-message">{{ error }}</p>
     </form>
+    <p class="text-center">
+      Нет аккаунта? <router-link to="/register">Зарегистрируйтесь</router-link>
+    </p>
   </div>
 </template>
 
@@ -42,5 +57,12 @@ const handleLogin = async () => {
 </script>
 
 <style scoped>
-.error { color: red; }
+.error-message {
+  color: var(--danger);
+  margin-top: 1rem;
+}
+.text-center {
+  text-align: center;
+  margin-top: 1rem;
+}
 </style>

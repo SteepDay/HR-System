@@ -1,13 +1,41 @@
 <template>
-  <form @submit.prevent="submitForm">
-    <input v-model="form.email" type="email" placeholder="Email" required>
-    <input v-model="form.password" type="password" placeholder="Пароль" required>
-    <select v-model="form.role">
-      <option value="HR">HR</option>
-      <option value="MANAGER">Руководитель</option>
-    </select>
-    <button type="submit">Зарегистрироваться</button>
-  </form>
+  <div class="card auth-card">
+    <h1>Регистрация</h1>
+    <form @submit.prevent="submitForm" class="form">
+      <div class="form-group">
+        <label>Email:</label>
+        <input 
+          v-model="form.email" 
+          type="email" 
+          class="form-control" 
+          placeholder="work@example.com" 
+          required
+        >
+      </div>
+      
+      <div class="form-group">
+        <label>Пароль:</label>
+        <input
+          v-model="form.password"
+          type="password"
+          class="form-control"
+          placeholder="Не менее 8 символов"
+          required
+        >
+      </div>
+      
+      <div class="form-group">
+        <label>Роль:</label>
+        <select v-model="form.role" class="form-control">
+          <option value="HR">HR-специалист</option>
+          <option value="MANAGER">Руководитель</option>
+        </select>
+      </div>
+      <p class="text-center mt-2">
+        Уже есть аккаунт? <router-link to="/login">Войдите</router-link>
+      </p>
+    </form>
+  </div>
 </template>
 
 <script setup>
@@ -31,3 +59,14 @@ const submitForm = async () => {
   }
 }
 </script>
+
+<style scoped>
+.auth-card {
+  max-width: 500px;
+  margin: 2rem auto;
+}
+
+.mt-2 {
+  margin-top: 1rem;
+}
+</style>

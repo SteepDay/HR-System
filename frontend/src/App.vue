@@ -1,17 +1,52 @@
 <template>
-  <div>
-    <nav class="navbar">
-      <router-link to="/">Главная</router-link>
-      <template v-if="authStore.token">
-        <router-link to="/dashboard">Кабинет</router-link>
-        <router-link to="/vacancies">Вакансии</router-link>
-        <button @click="authStore.logout()">Выйти</button>
-      </template>
-      <template v-else>
-        <router-link to="/login">Войти</router-link>
-      </template>
-    </nav>
-    <router-view/>
+  <div id="app">
+    <header class="header">
+      <nav class="navbar">
+        <router-link to="/" class="logo">HR System</router-link>
+        <div class="nav-links">
+          <!-- Кнопка "Вакансии" ТОЛЬКО для авторизованных -->
+          <router-link 
+            v-if="authStore.token" 
+            to="/vacancies"
+          >
+            Вакансии
+          </router-link>
+          
+          <!-- Кнопка "Кабинет" ТОЛЬКО для авторизованных -->
+          <router-link 
+            v-if="authStore.token" 
+            to="/dashboard"
+          >
+            Кабинет
+          </router-link>
+          
+          <!-- Кнопка "Выйти" ТОЛЬКО для авторизованных -->
+          <button 
+            v-if="authStore.token" 
+            @click="authStore.logout()" 
+            class="btn btn-danger"
+          >
+            Выйти
+          </button>
+          
+          <!-- Кнопка "Войти" ТОЛЬКО для неавторизованных -->
+          <router-link 
+            v-if="!authStore.token" 
+            to="/login"
+          >
+            Войти
+          </router-link>
+        </div>
+      </nav>
+    </header>
+    
+    <main class="main">
+      <router-view/>
+    </main>
+    
+    <footer class="footer">
+      © 2025 HR System. Все права защищены.
+    </footer>
   </div>
 </template>
 
@@ -19,16 +54,3 @@
 import { useAuthStore } from '@/stores/auth'
 const authStore = useAuthStore()
 </script>
-
-<style>
-.navbar {
-  padding: 1rem;
-  background: #f0f0f0;
-  margin-bottom: 2rem;
-}
-.navbar a, .navbar button {
-  margin: 0 0.5rem;
-  text-decoration: none;
-  color: #333;
-}
-</style>

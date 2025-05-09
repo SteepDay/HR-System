@@ -1,21 +1,68 @@
 <template>
-    <div>
-      <h1>Список вакансий</h1>
+  <div>
+    <div class="card action-bar">
+      <h1>Вакансии</h1>
       <button 
-        v-if="authStore.user?.role === 'MANAGER'" 
+        v-if="authStore.user?.role === 'MANAGER'"
         @click="$router.push('/vacancies/new')"
+        class="btn btn-primary"
       >
         Создать вакансию
       </button>
-      <ul>
-        <li v-for="vacancy in vacancies" :key="vacancy.id">
-          <h3>{{ vacancy.title }}</h3>
-          <p>{{ vacancy.description }}</p>
-          <span>Статус: {{ vacancy.status }}</span>
-        </li>
-      </ul>
     </div>
-  </template>
+    
+    <div class="vacancies-grid">
+      <div v-for="vacancy in vacancies" :key="vacancy.id" class="card vacancy-card">
+        <h2>{{ vacancy.title }}</h2>
+        <p>{{ vacancy.description }}</p>
+        <span class="status-badge" :class="vacancy.status.toLowerCase()">
+          {{ vacancy.status }}
+        </span>
+      </div>
+    </div>
+  </div>
+</template>
+
+<style scoped>
+.action-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.vacancies-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.vacancy-card {
+  transition: transform 0.3s;
+}
+
+.vacancy-card:hover {
+  transform: translateY(-5px);
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 0.3rem 0.6rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  margin-top: 0.5rem;
+}
+
+.status-badge.open {
+  background: #d4edda;
+  color: #155724;
+}
+
+.status-badge.closed {
+  background: #f8d7da;
+  color: #721c24;
+}
+</style>
   
   <script setup>
   import { ref, onMounted } from 'vue'
