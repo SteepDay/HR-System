@@ -5,6 +5,7 @@ import VacanciesView from '@/views/VacanciesView.vue'
 import CreateVacancyView from '@/views/CreateVacancyView.vue'
 import HomeView from '@/views/HomeView.vue'
 import RegisterView from '@/views/RegisterView.vue'
+import EditVacancyView from '@/views/EditVacancyView.vue'
 
 const routes = [
   {
@@ -39,6 +40,15 @@ const routes = [
     name: 'create-vacancy',
     component: CreateVacancyView,
     meta: { requiresAuth: true, requiredRole: 'MANAGER' }
+  },
+  {
+    path: '/vacancies/edit/:id',
+    name: 'edit-vacancy',
+    component: EditVacancyView,
+    meta: { 
+      requiresAuth: true,
+      requiredRole: 'MANAGER'
+    }
   }
 ]
 

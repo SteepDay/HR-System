@@ -3,19 +3,18 @@
     <h1>Добро пожаловать в HR-систему</h1>
     <p class="subtitle">Упрощаем подбор персонала для вашей компании</p>
     
-    <div class="action-buttons">
-      <template v-if="!authStore.token">
-        <router-link to="/login" class="btn btn-primary">Войти</router-link>
-        <router-link to="/register" class="btn btn-secondary">Регистрация</router-link>
-      </template>
-      <template v-else>
-        <router-link to="/dashboard" class="btn btn-primary">
-          <i class="icon-user"></i> Личный кабинет
-        </router-link>
-        <router-link to="/vacancies" class="btn btn-primary">
-          <i class="icon-briefcase"></i> Вакансии
-        </router-link>
-      </template>
+    <div class="action-buttons" v-if="!authStore.token">
+      <router-link to="/login" class="btn btn-primary">Войти</router-link>
+      <router-link to="/register" class="btn btn-secondary">Регистрация</router-link>
+    </div>
+    
+    <div class="action-buttons" v-else>
+      <router-link to="/dashboard" class="btn btn-primary">
+        <i class="icon-user"></i> Личный кабинет
+      </router-link>
+      <router-link to="/vacancies" class="btn btn-primary">
+        <i class="icon-briefcase"></i> Вакансии
+      </router-link>
     </div>
   </div>
 </template>
