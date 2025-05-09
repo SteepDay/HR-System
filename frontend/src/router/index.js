@@ -1,6 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import LoginView from '@/views/LoginView.vue'
 import DashboardView from '@/views/DashboardView.vue'
+import VacanciesView from '@/views/VacanciesView.vue'
+import CreateVacancyView from '@/views/CreateVacancyView.vue'
 
 const routes = [
   {
@@ -13,6 +15,18 @@ const routes = [
     name: 'dashboard',
     component: DashboardView,
     meta: { requiresAuth: true }
+  },
+  {
+    path: '/vacancies',
+    name: 'vacancies',
+    component: VacanciesView,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/vacancies/new',
+    name: 'create-vacancy',
+    component: CreateVacancyView,
+    meta: { requiresAuth: true, requiredRole: 'MANAGER' }
   }
 ]
 
@@ -27,16 +41,33 @@ import { useAuthStore } from '@/stores/auth'
 router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore()
   
-  // Проверяем авторизацию только для защищенных роутов
-  if (to.meta.requiresAuth) {
-    if (authStore.token) {
-      next()  // Пропускаем авторизованных
-    } else {
-      next('/login')  // Перенаправляем неавторизованных
-    }
-  } else {
-    next()  // Пропускаем публичные роуты
+  // 1. Проверка авторизации
+  if (to.meta.requiresAuth && !authStore.token) {
+    next('/login')
+    return  // Важно: прекращаем выполнение
   }
+
+  // 2. Проверка ролей (только для авторизованных)
+  if (to.meta.requiredRole) {
+    // Ждем загрузки данных пользователя, если их нет
+    if (!authStore.user) {
+      try {
+        await authStore.fetchUser()  // Добавим этот метод в хранилище
+      } catch (error) {
+        console.error('Ошибка загрузки данных пользователя:', error)
+        next('/login')
+        return
+      }
+    }
+
+    // Проверяем роль
+    if (authStore.user?.role !== to.meta.requiredRole) {
+      next('/vacancies')  // Или /forbidden, если есть такая страница
+      return
+    }
+  }
+
+  next()  // Все проверки пройдены
 })
 
 export default router

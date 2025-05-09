@@ -1,6 +1,7 @@
 <template>
   <div>
     <nav v-if="$route.name !== 'login'">
+      <router-link to="/vacancies">Вакансии</router-link>
       <button @click="$router.push('/dashboard')">Кабинет</button>
       <button @click="handleLogout">Выйти</button>
     </nav>
