@@ -107,3 +107,49 @@ class CandidateViewSet(viewsets.ModelViewSet):
             'new_status': candidate.get_status_display(),
             'comment': comment
         })
+    
+    @action(detail=True, methods=['patch'])
+    def update_hr_comment(self, request, pk=None):
+        print(f"\n=== Входящий запрос ===")
+        print(f"Method: {request.method}")
+        print(f"User: {request.user} (Role: {getattr(request.user, 'role', None)})")
+        print(f"Data: {request.data}")
+        print(f"Headers: {request.headers}\n")
+        
+        try:
+            candidate = self.get_object()
+            candidate.hr_comment = request.data.get('hr_comment', '')
+            candidate.save()
+            return Response({'status': 'success', 'new_comment': candidate.hr_comment})
+        except Exception as e:
+            print(f"Ошибка при сохранении: {str(e)}")
+            return Response({'error': str(e)}, status=400)
+
+    @action(detail=True, methods=['patch'])
+    def update_tech_comment(self, request, pk=None):
+        print(f"\n=== TECH Входящий запрос ===")
+        print(f"Method: {request.method}")
+        print(f"User: {request.user} (Role: {getattr(request.user, 'role', None)})")
+        print(f"Data: {request.data}")
+        print(f"Headers: {request.headers}\n")
+        
+        try:
+            # Проверка прав (только для менеджеров)
+            if request.user.role != 'MANAGER':
+                return Response(
+                    {'error': 'Только менеджер может обновлять технические комментарии'},
+                    status=403
+                )
+
+            candidate = self.get_object()
+            candidate.tech_comment = request.data.get('tech_comment', '')
+            candidate.save()
+            
+            return Response({
+                'status': 'success',
+                'new_comment': candidate.tech_comment,
+                'updated_at': candidate.updated_at
+            })
+        except Exception as e:
+            print(f"Ошибка при сохранении tech-комментария: {str(e)}")
+            return Response({'error': str(e)}, status=400)
