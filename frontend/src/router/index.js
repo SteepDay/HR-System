@@ -6,6 +6,8 @@ import CreateVacancyView from '@/views/CreateVacancyView.vue'
 import HomeView from '@/views/HomeView.vue'
 import RegisterView from '@/views/RegisterView.vue'
 import EditVacancyView from '@/views/EditVacancyView.vue'
+import CandidatesView from '@/views/CandidatesView.vue'
+import CandidateDetailView from '@/views/CandidateDetailView.vue'
 
 const routes = [
   {
@@ -49,6 +51,21 @@ const routes = [
       requiresAuth: true,
       requiredRole: 'MANAGER'
     }
+  },
+  {
+    path: '/candidates',
+    name: 'candidates',
+    component: CandidatesView, // Создадим позже
+    meta: { 
+      requiresAuth: true
+      // Не указываем requiredRole - доступно всем авторизованным
+    }
+  },
+  {
+    path: '/candidates/:id',
+    name: 'candidate-detail',
+    component: CandidateDetailView,
+    meta: { requiresAuth: true }
   }
 ]
 

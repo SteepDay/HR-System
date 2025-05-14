@@ -4,6 +4,14 @@
       <nav class="navbar">
         <router-link to="/" class="logo">HR System</router-link>
         <div class="nav-links">
+          <!-- Кнопка "Кандидаты" ТОЛЬКО для авторизованных -->
+          <router-link 
+            v-if="authStore.token"
+            to="/candidates"
+            class="nav-link"
+          >
+            Кандидаты
+          </router-link>
           <!-- Кнопка "Вакансии" ТОЛЬКО для авторизованных -->
           <router-link 
             v-if="authStore.token" 

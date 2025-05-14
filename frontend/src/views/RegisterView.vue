@@ -31,6 +31,10 @@
           <option value="MANAGER">Руководитель</option>
         </select>
       </div>
+      <button type="submit" class="btn btn-primary" :disabled="isLoading">
+        <span v-if="!isLoading">Зарегистрироваться</span>
+        <span v-else>Регистрация...</span>
+      </button>
       <p class="text-center mt-2">
         Уже есть аккаунт? <router-link to="/login">Войдите</router-link>
       </p>
