@@ -5,11 +5,40 @@
     <div v-else>
       <div class="header">
         <h1>Профиль кандидата: {{ candidate.full_name }}</h1>
-        <button @click="$router.back()" class="btn btn-secondary">
-          Вернуться к списку
-        </button>
+        <div class="header-actions">
+          <button @click="$router.back()" class="btn btn-secondary">
+            Вернуться к списку
+          </button>
+          
+          <!-- Кнопки управления для HR -->
+          <div v-if="authStore.user?.role === 'HR'" class="hr-actions">
+            <button @click="isEditing = !isEditing" class="btn-action btn-edit">
+              {{ isEditing ? 'Отменить' : 'Редактировать' }}
+            </button>
+            <button @click="confirmDelete" class="btn-action btn-delete">
+              Удалить
+            </button>
+          </div>
+        </div>
       </div>
 
+      <!-- Форма редактирования -->
+      <div v-if="isEditing" class="edit-form">
+        <h3>Редактирование данных</h3>
+        <div class="form-group">
+          <label>ФИО:</label>
+          <input v-model="editData.full_name" class="form-input">
+        </div>
+        <div class="form-group">
+          <label>Email:</label>
+          <input v-model="editData.email" type="email" class="form-input">
+        </div>
+        <div class="form-group">
+          <label>Телефон:</label>
+          <input v-model="editData.phone" class="form-input">
+        </div>
+        <button @click="saveChanges" class="btn btn-primary">Сохранить</button>
+      </div>
       <div class="details-grid">
         <div class="detail-card">
           <h3>Основная информация</h3>
@@ -97,7 +126,7 @@
           </div>
 
           <div v-if="candidate.tech_comment" class="comment-item">
-            <h4>Комментарий менеджера:</h4>
+            <h4>Комментарий тех. специалиста:</h4>
             <p>{{ candidate.tech_comment }}</p>
             <small>{{ formatDate(candidate.tech_comment_updated_at) }}</small>
           </div>
@@ -108,20 +137,34 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { ref, reactive, computed, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios'
 import { useAuthStore } from '@/stores/auth'
 
 const route = useRoute()
+const router = useRouter()
 const authStore = useAuthStore()
-const newHrComment = ref('')
-const newTechComment = ref('')
+
+// Состояния для данных кандидата
 const candidate = ref({})
 const loading = ref(true)
 const error = ref(null)
 const selectedStatus = ref('')
 
+// Состояния для комментариев
+const newHrComment = ref('')
+const newTechComment = ref('')
+
+// Состояния для редактирования
+const isEditing = ref(false)
+const editData = reactive({
+  full_name: '',
+  email: '',
+  phone: ''
+})
+
+// Опции статусов
 const statusOptions = {
   HR: [
     { value: 'HR', label: 'HR Собеседование' },
@@ -135,6 +178,7 @@ const statusOptions = {
   ]
 }
 
+// Доступные статусы для текущего пользователя
 const availableStatuses = computed(() => {
   if (authStore.user?.role === 'HR') {
     return statusOptions.HR.filter(s => s.value !== candidate.value.status)
@@ -142,17 +186,7 @@ const availableStatuses = computed(() => {
   return []
 })
 
-const getStatusDisplay = (status) => {
-  const statusMap = {
-    'HR': 'HR Собеседование',
-    'TECH': 'Тех. Собеседование',
-    'FINAL': 'На рассмотрении руководителя',
-    'HIRED': 'Принят',
-    'REJECTED': 'Отклонен'
-  }
-  return statusMap[status] || status
-}
-
+// Загрузка данных кандидата
 const loadCandidate = async () => {
   try {
     const response = await axios.get(
@@ -165,6 +199,13 @@ const loadCandidate = async () => {
     )
     candidate.value = response.data
     selectedStatus.value = response.data.status
+    
+    // Заполняем данные для редактирования
+    Object.assign(editData, {
+      full_name: response.data.full_name,
+      email: response.data.email,
+      phone: response.data.phone || ''
+    })
   } catch (err) {
     error.value = err.response?.data?.detail || 'Ошибка загрузки данных кандидата'
   } finally {
@@ -172,6 +213,7 @@ const loadCandidate = async () => {
   }
 }
 
+// Изменение статуса кандидата
 const changeStatus = async (newStatus) => {
   try {
     await axios.post(
@@ -190,18 +232,12 @@ const changeStatus = async (newStatus) => {
   }
 }
 
+// Сохранение HR комментария
 const saveHrComment = async () => {
   try {
-    console.log("Отправляемые данные:", { 
-      hr_comment: newHrComment.value,
-      candidate_id: route.params.id 
-    })
-
     const response = await axios.patch(
       `http://localhost:8000/api/candidates/${route.params.id}/update_hr_comment/`,
-      { 
-        hr_comment: newHrComment.value 
-      },
+      { hr_comment: newHrComment.value },
       {
         headers: {
           Authorization: `Bearer ${authStore.token}`,
@@ -209,31 +245,19 @@ const saveHrComment = async () => {
         }
       }
     )
-    console.log('Ответ сервера:', response.data)
-    await loadCandidate() // Перезагружаем данные
+    await loadCandidate()
     newHrComment.value = ''
   } catch (err) {
-    console.error("Полная ошибка:", {
-      message: err.message,
-      response: err.response,
-      request: err.request
-    }) // Расширенное логирование
-    error.value = err.response?.data?.detail || 'Неизвестная ошибка сервера'
+    error.value = err.response?.data?.detail || 'Ошибка сохранения комментария HR'
   }
 }
 
+// Сохранение технического комментария
 const saveTechComment = async () => {
   try {
-    console.log("Отправляемые данные (tech):", { 
-      tech_comment: newTechComment.value,
-      candidate_id: route.params.id 
-    })
-
     const response = await axios.patch(
       `http://localhost:8000/api/candidates/${route.params.id}/update_tech_comment/`,
-      { 
-        tech_comment: newTechComment.value 
-      },
+      { tech_comment: newTechComment.value },
       {
         headers: {
           Authorization: `Bearer ${authStore.token}`,
@@ -241,34 +265,151 @@ const saveTechComment = async () => {
         }
       }
     )
-    console.log("Полный ответ сервера (tech):", response)
     await loadCandidate()
     newTechComment.value = ''
   } catch (err) {
-    console.error("Полная ошибка (tech):", {
-      message: err.message,
-      response: err.response,
-      request: err.request
-    })
     error.value = err.response?.data?.detail || 'Ошибка сохранения технического комментария'
   }
 }
 
-const formatDate = (dateString) => {
-  if (!dateString) return ''
-  return new Date(dateString).toLocaleString()
-}
-
+// Обновление статуса через select
 const updateStatus = async () => {
   if (selectedStatus.value) {
     await changeStatus(selectedStatus.value)
   }
 }
 
+// Сохранение изменений данных кандидата
+const saveChanges = async () => {
+  try {
+    await axios.patch(
+      `http://localhost:8000/api/candidates/${route.params.id}/`,
+      editData,
+      {
+        headers: {
+          Authorization: `Bearer ${authStore.token}`,
+          'Content-Type': 'application/json'
+        }
+      }
+    )
+    await loadCandidate()
+    isEditing.value = false
+  } catch (err) {
+    error.value = err.response?.data?.detail || 'Ошибка сохранения изменений'
+  }
+}
+
+// Удаление кандидата
+const deleteCandidate = async () => {
+  try {
+    await axios.delete(
+      `http://localhost:8000/api/candidates/${route.params.id}/`,
+      {
+        headers: {
+          Authorization: `Bearer ${authStore.token}`
+        }
+      }
+    )
+    router.push('/candidates')
+  } catch (err) {
+    error.value = err.response?.data?.detail || 'Ошибка удаления кандидата'
+  }
+}
+
+// Подтверждение удаления
+const confirmDelete = () => {
+  if (confirm(`Вы уверены, что хотите удалить кандидата ${candidate.value.full_name}?`)) {
+    deleteCandidate()
+  }
+}
+
+// Форматирование даты
+const formatDate = (dateString) => {
+  if (!dateString) return ''
+  return new Date(dateString).toLocaleString()
+}
+
+// Отображение статуса
+const getStatusDisplay = (status) => {
+  const statusMap = {
+    'HR': 'HR Собеседование',
+    'TECH': 'Тех. Собеседование',
+    'FINAL': 'На рассмотрении руководителя',
+    'HIRED': 'Принят',
+    'REJECTED': 'Отклонен'
+  }
+  return statusMap[status] || status
+}
+
+// Загрузка данных при монтировании компонента
 onMounted(loadCandidate)
 </script>
 
 <style scoped>
+.header-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.hr-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-action {
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-edit {
+  background-color: #e3f2fd;
+  color: #1976d2;
+  border: 1px solid #bbdefb;
+}
+
+.btn-edit:hover {
+  background-color: #bbdefb;
+}
+
+.btn-delete {
+  background-color: #ffebee;
+  color: #d32f2f;
+  border: 1px solid #ffcdd2;
+}
+
+.btn-delete:hover {
+  background-color: #ffcdd2;
+}
+
+.edit-form {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+
+.form-input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
 .candidate-detail {
   max-width: 1200px;
   margin: 0 auto;

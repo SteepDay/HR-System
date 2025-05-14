@@ -1,7 +1,50 @@
 <template>
   <div class="candidates-container">
-    <h1>Управление кандидатами</h1>
-    
+    <div class="action-bar">
+      <h1>Управление кандидатами</h1>
+      <button 
+        v-if="authStore.user?.role === 'HR'"
+        @click="showCreateModal = true"
+        class="btn btn-primary"
+      >
+        + Добавить кандидата
+      </button>
+    </div>
+
+    <!-- Модальное окно создания кандидата -->
+    <div v-if="showCreateModal" class="modal-overlay">
+      <div class="modal-content">
+        <h2>Новый кандидат</h2>
+        <form @submit.prevent="createCandidate">
+          <div class="form-group">
+            <label>ФИО:</label>
+            <input v-model="newCandidate.full_name" required class="form-control">
+          </div>
+          <div class="form-group">
+            <label>Email:</label>
+            <input v-model="newCandidate.email" type="email" required class="form-control">
+          </div>
+          <div class="form-group">
+            <label>Телефон:</label>
+            <input v-model="newCandidate.phone" class="form-control">
+          </div>
+          <div class="form-group">
+            <label>Вакансия:</label>
+            <select v-model="newCandidate.vacancy_id" required class="form-control">
+              <option disabled value="">Выберите вакансию</option>
+              <option v-for="vacancy in vacancies" :value="vacancy.id">
+                {{ vacancy.title }}
+              </option>
+            </select>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Сохранить</button>
+            <button type="button" @click="showCreateModal = false" class="btn btn-secondary">Отмена</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
     <!-- Фильтры -->
     <div class="filters">
       <select v-model="statusFilter" class="filter-select">
@@ -47,9 +90,19 @@ import axios from 'axios'
 const authStore = useAuthStore()
 const router = useRouter()
 const candidates = ref([])
+const vacancies = ref([])
 const loading = ref(false)
 const error = ref(null)
 const statusFilter = ref('')
+const showCreateModal = ref(false)
+
+const newCandidate = ref({
+  full_name: '',
+  email: '',
+  phone: '',
+  vacancy_id: null,
+  status: 'HR' // Статус по умолчанию
+})
 
 const statusOptions = [
   { value: 'HR', label: 'HR Собеседование' },
@@ -78,6 +131,42 @@ const fetchCandidates = async () => {
   }
 }
 
+const fetchVacancies = async () => {
+  try {
+    const response = await axios.get('http://localhost:8000/api/vacancies/', {
+      headers: {
+        Authorization: `Bearer ${authStore.token}`
+      }
+    })
+    vacancies.value = response.data
+  } catch (err) {
+    console.error('Ошибка загрузки вакансий:', err)
+  }
+}
+
+const createCandidate = async () => {
+  try {
+    await axios.post('http://localhost:8000/api/candidates/', newCandidate.value, {
+      headers: {
+        Authorization: `Bearer ${authStore.token}`
+      }
+    })
+    await fetchCandidates()
+    showCreateModal.value = false
+    // Сброс формы
+    newCandidate.value = {
+      full_name: '',
+      email: '',
+      phone: '',
+      vacancy_id: null,
+      status: 'HR'
+    }
+  } catch (err) {
+    error.value = err.response?.data?.detail || 'Ошибка создания кандидата'
+    console.error('Детали ошибки:', err.response)
+  }
+}
+
 const filteredCandidates = computed(() => {
   if (!statusFilter.value) return candidates.value
   return candidates.value.filter(c => c.status === statusFilter.value)
@@ -94,7 +183,10 @@ const getStatusDisplay = (status) => {
   return statusMap[status] || status
 }
 
-onMounted(fetchCandidates)
+onMounted(() => {
+  fetchCandidates()
+  fetchVacancies()
+})
 </script>
 
 <style scoped>
@@ -102,6 +194,13 @@ onMounted(fetchCandidates)
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
+}
+
+.action-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
 }
 
 .filters {
@@ -138,5 +237,51 @@ onMounted(fetchCandidates)
 }
 .status-final {
   color: #2ecc71;
+}
+
+/* Стили для модального окна */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 500px;
+  max-width: 90%;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+
+.form-control {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
 }
 </style>
