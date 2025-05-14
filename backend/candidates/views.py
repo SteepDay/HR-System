@@ -1,10 +1,10 @@
-from rest_framework import viewsets, permissions
+from rest_framework import viewsets, permissions, status
 from .models import Candidate
 from .serializers import CandidateSerializer
 from users.models import User
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.exceptions import PermissionDenied
+from rest_framework.exceptions import PermissionDenied, ValidationError
 
 class CandidateViewSet(viewsets.ModelViewSet):
     serializer_class = CandidateSerializer
@@ -27,6 +27,47 @@ class CandidateViewSet(viewsets.ModelViewSet):
             return queryset.filter(status__in=['FINAL', 'HIRED', 'REJECTED'])
             
         return queryset.none()
+
+    # Создание кандидата (только для HR)
+    def create(self, request, *args, **kwargs):
+        if request.user.role != 'HR':
+            raise PermissionDenied("Только HR может создавать кандидатов")
+        return super().create(request, *args, **kwargs)
+
+    # Обновление кандидата (только для HR)
+    def update(self, request, *args, **kwargs):
+        if request.user.role != 'HR':
+            raise PermissionDenied("Только HR может редактировать кандидатов")
+        return super().update(request, *args, **kwargs)
+
+    # Частичное обновление (только для HR)
+    def partial_update(self, request, *args, **kwargs):
+        if request.user.role != 'HR':
+            raise PermissionDenied("Только HR может редактировать кандидатов")
+        
+        instance = self.get_object()
+        serializer = self.get_serializer(
+            instance, 
+            data=request.data, 
+            partial=True
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        
+        return Response(serializer.data)
+
+    # Удаление кандидата (только для HR)
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        
+        if request.user.role != 'HR':
+            raise PermissionDenied("Только HR может удалять кандидатов")
+        
+        instance.delete()
+        return Response(
+            {"message": "Кандидат успешно удален"},
+            status=status.HTTP_204_NO_CONTENT
+        )
 
     def perform_create(self, serializer):
         serializer.save(created_by=self.request.user)
@@ -110,46 +151,22 @@ class CandidateViewSet(viewsets.ModelViewSet):
     
     @action(detail=True, methods=['patch'])
     def update_hr_comment(self, request, pk=None):
-        print(f"\n=== Входящий запрос ===")
-        print(f"Method: {request.method}")
-        print(f"User: {request.user} (Role: {getattr(request.user, 'role', None)})")
-        print(f"Data: {request.data}")
-        print(f"Headers: {request.headers}\n")
+        candidate = self.get_object()
         
-        try:
-            candidate = self.get_object()
-            candidate.hr_comment = request.data.get('hr_comment', '')
-            candidate.save()
-            return Response({'status': 'success', 'new_comment': candidate.hr_comment})
-        except Exception as e:
-            print(f"Ошибка при сохранении: {str(e)}")
-            return Response({'error': str(e)}, status=400)
+        if request.user.role != 'HR':
+            raise PermissionDenied("Только HR может обновлять HR комментарии")
+            
+        candidate.hr_comment = request.data.get('hr_comment', '')
+        candidate.save()
+        return Response({'status': 'hr_comment_updated'})
 
     @action(detail=True, methods=['patch'])
     def update_tech_comment(self, request, pk=None):
-        print(f"\n=== TECH Входящий запрос ===")
-        print(f"Method: {request.method}")
-        print(f"User: {request.user} (Role: {getattr(request.user, 'role', None)})")
-        print(f"Data: {request.data}")
-        print(f"Headers: {request.headers}\n")
+        candidate = self.get_object()
         
-        try:
-            # Проверка прав (только для менеджеров)
-            if request.user.role != 'MANAGER':
-                return Response(
-                    {'error': 'Только менеджер может обновлять технические комментарии'},
-                    status=403
-                )
-
-            candidate = self.get_object()
-            candidate.tech_comment = request.data.get('tech_comment', '')
-            candidate.save()
+        if request.user.role != 'MANAGER':
+            raise PermissionDenied("Только менеджер может обновлять технические комментарии")
             
-            return Response({
-                'status': 'success',
-                'new_comment': candidate.tech_comment,
-                'updated_at': candidate.updated_at
-            })
-        except Exception as e:
-            print(f"Ошибка при сохранении tech-комментария: {str(e)}")
-            return Response({'error': str(e)}, status=400)
+        candidate.tech_comment = request.data.get('tech_comment', '')
+        candidate.save()
+        return Response({'status': 'tech_comment_updated'})
