@@ -31,7 +31,7 @@
           <!-- Кнопка "Выйти" ТОЛЬКО для авторизованных -->
           <button 
             v-if="authStore.token" 
-            @click="authStore.logout()" 
+            @click="handleLogout" 
             class="btn btn-danger"
           >
             Выйти
@@ -60,5 +60,13 @@
 
 <script setup>
 import { useAuthStore } from '@/stores/auth'
+import { useRouter } from 'vue-router'
+
 const authStore = useAuthStore()
+const router = useRouter()
+
+const handleLogout = () => {
+  authStore.logout()
+  router.push('/login')
+}
 </script>
