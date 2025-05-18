@@ -89,6 +89,7 @@ class CandidateViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['post'])
     def reject(self, request, pk=None):
         candidate = self.get_object()
+        candidate._pre_save_status = candidate.status
         comment = request.data.get('comment', '')
 
         if request.user.role == 'HR':
@@ -108,6 +109,7 @@ class CandidateViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['post'])
     def change_status(self, request, pk=None):
         candidate = self.get_object()
+        candidate._pre_save_status = candidate.status
         new_status = request.data.get('status')
         comment = request.data.get('comment', '')
 
