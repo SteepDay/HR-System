@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Обновление статуса</title>
+</head>
+<body>
+    <h2>Уважаемый(ая) {{ candidate.full_name }},</h2>
+    <p>Статус вашего отклика на вакансию <strong>{{ vacancy.title }}</strong> был изменен:</p>
+    <p>Было: <strong>{{ prev_status|default:"Новый" }}</strong></p>
+    <p>Стало: <strong>{{ new_status }}</strong></p>
+    
+    {% if candidate.hr_comment %}
+    <div style="margin-top: 20px; padding: 10px; background-color: #f5f5f5;">
+        <h3>Комментарий HR:</h3>
+        <p>{{ candidate.hr_comment }}</p>
+    </div>
+    {% endif %}
+    
+    <p style="margin-top: 30px;">С уважением,<br>HR-отдел компании</p>
+</body>
+</html>

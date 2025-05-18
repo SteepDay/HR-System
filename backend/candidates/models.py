@@ -40,3 +40,10 @@ class Candidate(models.Model):
 
     def __str__(self):
         return f'{self.full_name} ({self.get_status_display()})'
+    
+    def save(self, *args, **kwargs):
+        # Сохраняем текущий статус перед сохранением
+        if self.pk:  # Только для существующих записей
+            old_status = Candidate.objects.get(pk=self.pk).status
+            self._pre_save_status = old_status
+        super().save(*args, **kwargs)
