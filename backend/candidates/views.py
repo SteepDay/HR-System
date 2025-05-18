@@ -172,3 +172,20 @@ class CandidateViewSet(viewsets.ModelViewSet):
         candidate.tech_comment = request.data.get('tech_comment', '')
         candidate.save()
         return Response({'status': 'tech_comment_updated'})
+    
+    @action(detail=False, methods=['get'])
+    def stats(self, request):
+        from django.db.models import Count, Q
+        from .models import Candidate
+
+        stats = {
+            'total': Candidate.objects.count(),
+            'hired': Candidate.objects.filter(status=Candidate.Status.HIRED).count(),
+            'rejected': Candidate.objects.filter(
+                Q(status=Candidate.Status.REJECTED) |
+                Q(status=Candidate.Status.HR_REJECTED) |
+                Q(status=Candidate.Status.TECH_REJECTED)
+            ).count()
+        }
+
+        return Response(stats)
