@@ -126,7 +126,7 @@
           </div>
 
           <div v-if="candidate.tech_comment" class="comment-item">
-            <h4>Комментарий тех. специалиста:</h4>
+            <h4>Комментарий рукводителя:</h4>
             <p>{{ candidate.tech_comment }}</p>
             <small>{{ formatDate(candidate.tech_comment_updated_at) }}</small>
           </div>
