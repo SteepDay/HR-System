@@ -31,10 +31,12 @@
           <option value="MANAGER">Руководитель</option>
         </select>
       </div>
-      <button type="submit" class="btn btn-primary" :disabled="isLoading">
-        <span v-if="!isLoading">Зарегистрироваться</span>
-        <span v-else>Регистрация...</span>
-      </button>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary" :disabled="isLoading">
+          <span v-if="!isLoading">Зарегистрироваться</span>
+          <span v-else>Регистрация...</span>
+        </button>
+      </div>
       <p class="text-center mt-2">
         Уже есть аккаунт? <router-link to="/login">Войдите</router-link>
       </p>
@@ -68,8 +70,13 @@ const submitForm = async () => {
 .auth-card {
   max-width: 500px;
   margin: 2rem auto;
+  padding: 2.5rem 2rem;
 }
-
+.form-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
 .mt-2 {
   margin-top: 1rem;
 }

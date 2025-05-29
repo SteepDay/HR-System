@@ -7,29 +7,40 @@
 }
 
 :root {
-  --primary: #2c3e50;
-  --secondary: #34495e;
-  --accent: #3498db;
-  --light: #ecf0f1;
-  --dark: #2c3e50;
-  --success: #2ecc71;
+  --primary: #1a2a33;
+  --secondary: #38b6a8;
+  --accent: linear-gradient(90deg, #43e97b 0%, #38b6ff 100%);
+  --accent-hover: linear-gradient(90deg, #38b6ff 0%, #43e97b 100%);
+  --light: #f4f8fb;
+  --dark: #1a2a33;
+  --success: #43e97b;
   --danger: #e74c3c;
   --warning: #f39c12;
+  --text-main: #1a2a33;
+  --text-secondary: #3a4a5a;
+  --border-main: #b2c2cc;
+  --border-strong: #38b6a8;
+  --btn-text: #fff;
+}
+
+body, #app, .header, .footer, .main {
+  color: var(--text-main);
 }
 
 #app {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background-color: #f5f7fa;
+  background: transparent;
 }
 
 /* Шапка */
 .header {
-  background: var(--primary);
-  color: white;
+  background: linear-gradient(90deg, #43e97b 0%, #38b6ff 100%);
+  color: #fff;
   padding: 1rem;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 8px rgba(56,182,168,0.10);
+  border-bottom: 2px solid var(--border-main);
 }
 
 .navbar {
@@ -43,8 +54,9 @@
 .logo {
   font-size: 1.5rem;
   font-weight: bold;
-  color: white;
+  color: var(--text-main);
   text-decoration: none;
+  letter-spacing: 0.5px;
 }
 
 .nav-links {
@@ -52,15 +64,21 @@
   gap: 1.5rem;
 }
 
-.nav-links a {
-  color: var(--light);
-  text-decoration: none;
-  transition: color 0.3s;
+.nav-links a:not(.btn-danger) {
+  background: none;
+  color: #fff;
+  border: none;
   font-weight: 500;
+  border-radius: 6px;
+  padding: 0.4rem 1rem;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+  box-shadow: none;
 }
 
-.nav-links a:hover {
-  color: var(--accent);
+.nav-links a:not(.btn-danger):hover, .nav-links a:not(.btn-danger):focus {
+  background: rgba(255,255,255,0.85);
+  color: #1a2a33;
+  box-shadow: 0 2px 8px rgba(56,182,168,0.10);
 }
 
 /* Основное содержимое */
@@ -74,20 +92,29 @@
 
 /* Подвал */
 .footer {
-  background: var(--primary);
-  color: white;
+  background: linear-gradient(90deg, #43e97b 0%, #38b6ff 100%);
+  color: #fff;
   text-align: center;
   padding: 1.5rem;
   margin-top: 2rem;
+  border-top: 2px solid var(--border-main);
+  box-shadow: 0 -2px 8px rgba(56,182,168,0.10);
 }
 
 /* Карточки */
 .card {
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(56,182,168,0.10), 0 1.5px 0 var(--border-main);
   padding: 1.5rem;
   margin-bottom: 1.5rem;
+  border: 1.5px solid var(--border-main);
+  transition: box-shadow 0.3s, border-color 0.3s;
+}
+
+.card:hover {
+  box-shadow: 0 8px 32px rgba(56,182,168,0.18), 0 2px 0 var(--border-strong);
+  border-color: var(--border-strong);
 }
 
 /* Кнопки */
@@ -95,20 +122,37 @@
   display: inline-block;
   padding: 0.6rem 1.2rem;
   border-radius: 6px;
-  font-weight: 500;
+  font-weight: 700;
   cursor: pointer;
-  transition: all 0.3s;
+  transition: all 0.3s cubic-bezier(.4,2,.6,1), box-shadow 0.3s;
   text-align: center;
   border: none;
-}
-
-.btn-primary {
+  color: var(--btn-text);
+  text-shadow: 0 2px 8px rgba(26,42,51,0.18);
   background: var(--accent);
-  color: white;
+  box-shadow: 0 2px 8px rgba(56,182,168,0.14);
+  background-size: 200%;
+  position: relative;
+  overflow: hidden;
 }
 
-.btn-primary:hover {
-  background: #2980b9;
+.btn::after {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; right: 0; bottom: 0;
+  background: var(--accent-hover);
+  opacity: 0;
+  transition: opacity 0.4s;
+  z-index: 0;
+}
+
+.btn:hover, .btn:focus {
+  background: var(--accent-hover);
+  color: var(--btn-text);
+}
+
+.btn:hover::after, .btn:focus::after {
+  opacity: 1;
 }
 
 .btn-danger {
@@ -124,9 +168,17 @@
 .form-control {
   width: 100%;
   padding: 0.8rem;
-  border: 1px solid #ddd;
+  border: 1.5px solid var(--border-main);
   border-radius: 6px;
   font-size: 1rem;
+  background: #fafdff;
+  color: var(--text-main);
+  transition: border-color 0.2s;
+}
+
+.form-control:focus {
+  border-color: var(--border-strong);
+  box-shadow: 0 0 0 2px rgba(56,182,168,0.12);
 }
 
 /* Адаптивность */

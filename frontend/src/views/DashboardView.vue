@@ -44,6 +44,7 @@ const logout = () => {
 .dashboard-card {
   max-width: 600px;
   margin: 2rem auto;
+  padding: 2.5rem 2rem;
 }
 
 .user-header {
@@ -87,5 +88,29 @@ const logout = () => {
 
 .info-item p {
   font-size: 1.1rem;
+}
+
+.btn {
+  display: block;
+  margin: 2rem auto 0 auto;
+  min-width: 180px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.btn-danger {
+  background: var(--danger);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(231,76,60,0.14);
+  transition: background 0.3s, box-shadow 0.3s, transform 0.2s;
+}
+
+.btn-danger:hover, .btn-danger:focus {
+  background: #c0392b;
+  color: #fff;
+  box-shadow: 0 4px 24px 0 rgba(231,76,60,0.22);
+  transform: scale(1.045);
 }
 </style>

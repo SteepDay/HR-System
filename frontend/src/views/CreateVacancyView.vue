@@ -62,29 +62,35 @@ const submitForm = async () => {
 
 <style scoped>
 .form-card {
-  max-width: 800px;
+  max-width: 600px;
   margin: 2rem auto;
+  padding: 2.5rem 2rem;
 }
-
 .vacancy-form {
   margin-top: 2rem;
 }
-
+.form-group {
+  margin-bottom: 1.5rem;
+}
 .form-actions {
   display: flex;
   gap: 1rem;
+  justify-content: flex-end;
   margin-top: 2rem;
 }
-
 .btn {
-  text-decoration: none;
+  min-width: 140px;
+  font-weight: 700;
+  text-align: center;
 }
-
+.btn-secondary {
+  margin-left: 0.5rem;
+}
 @media (max-width: 600px) {
   .form-actions {
     flex-direction: column;
+    align-items: stretch;
   }
-  
   .btn {
     width: 100%;
   }

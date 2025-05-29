@@ -1,5 +1,5 @@
 <template>
-  <div class="card">
+  <div class="card login-card">
     <h1>Вход в систему</h1>
     <form @submit.prevent="handleLogin" class="form">
       <div class="form-group">
@@ -22,7 +22,9 @@
           placeholder="Введите пароль"
         >
       </div>
-      <button type="submit" class="btn btn-primary">Войти</button>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Войти</button>
+      </div>
       <p v-if="error" class="error-message">{{ error }}</p>
     </form>
     <p class="text-center">
@@ -57,9 +59,20 @@ const handleLogin = async () => {
 </script>
 
 <style scoped>
+.login-card {
+  max-width: 400px;
+  margin: 2.5rem auto;
+  padding: 2.5rem 2rem;
+}
+.form-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
 .error-message {
   color: var(--danger);
   margin-top: 1rem;
+  text-align: center;
 }
 .text-center {
   text-align: center;

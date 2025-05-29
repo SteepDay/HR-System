@@ -200,19 +200,70 @@ onMounted(() => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 2rem;
+  gap: 1.5rem;
+}
+
+.action-bar .btn {
+  min-width: 160px;
 }
 
 .filters {
-  margin: 20px 0;
   display: flex;
-  gap: 10px;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 1.5rem;
 }
 
-.filter-select {
-  padding: 8px;
-  border-radius: 4px;
-  border: 1px solid #ddd;
+.filter-select, .refresh-btn {
+  min-width: 140px;
+}
+
+.refresh-btn {
+  background: var(--accent-hover);
+  color: #fff;
+  font-weight: 700;
+  border: none;
+  border-radius: 6px;
+  padding: 0.6rem 1.2rem;
+  box-shadow: 0 2px 8px rgba(56,182,168,0.14);
+  transition: background 0.3s, box-shadow 0.3s, transform 0.2s;
+  cursor: pointer;
+}
+.refresh-btn:hover, .refresh-btn:focus {
+  background: var(--accent);
+  color: #fff;
+  box-shadow: 0 4px 24px 0 rgba(56,182,168,0.22), 0 0 8px 2px rgba(67,233,123,0.18);
+  transform: scale(1.045);
+}
+
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 1.5rem;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(30,40,50,0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.modal-content {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(56,182,168,0.18);
+  padding: 2.5rem 2rem;
+  min-width: 340px;
+  max-width: 95vw;
+}
+.candidates-list .btn {
+  margin-top: 1rem;
+  min-width: 120px;
 }
 
 .candidates-list {
@@ -223,10 +274,16 @@ onMounted(() => {
 }
 
 .candidate-card {
-  border: 1px solid #eee;
+  border: 1.5px solid var(--border-main);
   padding: 15px;
-  border-radius: 8px;
+  border-radius: 12px;
   background: white;
+  box-shadow: 0 2px 8px rgba(56,182,168,0.07);
+  transition: box-shadow 0.3s, border-color 0.3s;
+}
+.candidate-card:hover {
+  box-shadow: 0 8px 32px rgba(56,182,168,0.18);
+  border-color: var(--border-strong);
 }
 
 .status-hr {
@@ -237,51 +294,5 @@ onMounted(() => {
 }
 .status-final {
   color: #2ecc71;
-}
-
-/* Стили для модального окна */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0,0,0,0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-.modal-content {
-  background: white;
-  padding: 20px;
-  border-radius: 8px;
-  width: 500px;
-  max-width: 90%;
-}
-
-.form-group {
-  margin-bottom: 15px;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 5px;
-  font-weight: 500;
-}
-
-.form-control {
-  width: 100%;
-  padding: 8px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-}
-
-.form-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  margin-top: 20px;
 }
 </style>

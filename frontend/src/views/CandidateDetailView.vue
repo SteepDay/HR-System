@@ -346,62 +346,112 @@ onMounted(loadCandidate)
 </script>
 
 <style scoped>
+.candidate-detail {
+  max-width: 1100px;
+  margin: 2rem auto;
+  padding: 2.5rem 2rem;
+}
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  margin-bottom: 2rem;
+}
 .header-actions {
   display: flex;
-  gap: 10px;
+  gap: 1.2rem;
+  flex-wrap: wrap;
   align-items: center;
 }
-
 .hr-actions {
   display: flex;
-  gap: 10px;
+  gap: 1rem;
 }
-
 .btn-action {
-  padding: 8px 16px;
-  border-radius: 4px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
+  min-width: 120px;
+  font-weight: 700;
+  border-radius: 6px;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  transition: background 0.3s, box-shadow 0.3s, transform 0.2s;
+  box-shadow: 0 2px 8px rgba(56,182,168,0.10);
 }
-
 .btn-edit {
-  background-color: #e3f2fd;
-  color: #1976d2;
-  border: 1px solid #bbdefb;
+  background: var(--accent-hover);
+  color: #fff;
 }
-
-.btn-edit:hover {
-  background-color: #bbdefb;
+.btn-edit:hover, .btn-edit:focus {
+  background: var(--accent);
+  color: #fff;
+  box-shadow: 0 4px 24px 0 rgba(56,182,168,0.22);
+  transform: scale(1.045);
 }
-
 .btn-delete {
-  background-color: #ffebee;
-  color: #d32f2f;
-  border: 1px solid #ffcdd2;
+  background: var(--danger);
+  color: #fff;
 }
-
-.btn-delete:hover {
-  background-color: #ffcdd2;
+.btn-delete:hover, .btn-delete:focus {
+  background: #c0392b;
+  color: #fff;
+  box-shadow: 0 4px 24px 0 rgba(231,76,60,0.22);
+  transform: scale(1.045);
 }
-
+.details-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 2rem;
+  margin-top: 2rem;
+}
+.detail-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(56,182,168,0.10);
+  padding: 1.5rem;
+  border: 1.5px solid var(--border-main);
+  transition: box-shadow 0.3s, border-color 0.3s;
+}
+.detail-card:hover {
+  box-shadow: 0 8px 32px rgba(56,182,168,0.18);
+  border-color: var(--border-strong);
+}
+.status-controls .status-select {
+  min-width: 160px;
+  margin-top: 1rem;
+}
+.manager-controls {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+.comment-form .btn {
+  margin-top: 1rem;
+  min-width: 120px;
+}
+@media (max-width: 900px) {
+  .details-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.error {
+  color: #e74c3c;
+  padding: 10px;
+  background-color: #fdecea;
+  border-radius: 4px;
+}
 .edit-form {
   background: #f8f9fa;
   padding: 20px;
   border-radius: 8px;
   margin-bottom: 20px;
 }
-
 .form-group {
   margin-bottom: 15px;
 }
-
 .form-group label {
   display: block;
   margin-bottom: 5px;
   font-weight: 500;
 }
-
 .form-input {
   width: 100%;
   padding: 8px 12px;
@@ -409,97 +459,40 @@ onMounted(loadCandidate)
   border-radius: 4px;
   font-size: 1rem;
 }
-
-.candidate-detail {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
-}
-
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 30px;
-}
-
-.details-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 20px;
-  margin-top: 20px;
-}
-
-.detail-card {
-  background: white;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
 .status-section {
   display: flex;
   flex-direction: column;
   gap: 15px;
 }
-
 .status-HR {
   color: #3498db;
   font-weight: bold;
 }
-
 .status-TECH {
   color: #f39c12;
   font-weight: bold;
 }
-
 .status-FINAL {
   color: #2ecc71;
   font-weight: bold;
 }
-
 .status-HIRED {
   color: #27ae60;
   font-weight: bold;
 }
-
 .status-REJECTED {
   color: #e74c3c;
   font-weight: bold;
 }
-
-.status-select {
-  padding: 8px;
-  border-radius: 4px;
-  border: 1px solid #ddd;
-  width: 100%;
-  max-width: 300px;
-}
-
-.manager-controls {
-  display: flex;
-  gap: 10px;
-  margin-top: 15px;
-}
-
 .comments {
   grid-column: 1 / -1;
 }
-
-.error {
-  color: #e74c3c;
-  padding: 10px;
-  background-color: #fdecea;
-  border-radius: 4px;
-}
-
 .comment-form {
   margin-bottom: 20px;
   padding: 15px;
   background: #f8f9fa;
   border-radius: 8px;
 }
-
 .comment-textarea {
   width: 100%;
   min-height: 100px;
@@ -509,7 +502,6 @@ onMounted(loadCandidate)
   border-radius: 4px;
   resize: vertical;
 }
-
 .comment-item {
   margin-bottom: 20px;
   padding: 15px;
@@ -517,12 +509,10 @@ onMounted(loadCandidate)
   border-radius: 8px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
-
 .comment-item h4 {
   margin-top: 0;
   color: #333;
 }
-
 .comment-item small {
   color: #777;
   font-size: 0.8em;

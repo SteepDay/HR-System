@@ -123,8 +123,14 @@ onMounted(() => {
 .stats-card {
   background: white;
   padding: 1.5rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(56,182,168,0.07);
+  border: 1.5px solid var(--border-main);
+  transition: box-shadow 0.3s, border-color 0.3s;
+}
+.stats-card:hover {
+  box-shadow: 0 8px 32px rgba(56,182,168,0.18);
+  border-color: var(--border-strong);
 }
 
 .stats-grid {
@@ -181,18 +187,29 @@ onMounted(() => {
 
 .action-buttons {
   display: flex;
-  gap: 1rem;
+  gap: 1.2rem;
   justify-content: center;
-  margin-top: 2rem;
-}
-
-.btn {
-  text-decoration: none;
+  margin-top: 2.5rem;
 }
 
 .btn-secondary {
-  background: var(--secondary);
-  color: white;
+  background: var(--accent-hover);
+  color: #fff;
+  font-weight: 700;
+  border: none;
+  box-shadow: 0 2px 8px rgba(56,182,168,0.14);
+  transition: background 0.3s, box-shadow 0.3s, transform 0.2s;
+}
+.btn-secondary:hover, .btn-secondary:focus {
+  background: var(--accent);
+  color: #fff;
+  box-shadow: 0 4px 24px 0 rgba(56,182,168,0.22), 0 0 8px 2px rgba(67,233,123,0.18);
+  transform: scale(1.045);
+}
+
+.btn {
+  min-width: 140px;
+  text-align: center;
 }
 
 .btn-primary {

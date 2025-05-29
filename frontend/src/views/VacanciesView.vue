@@ -66,17 +66,41 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-.vacancy-header {
+.action-bar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+.action-bar .btn {
+  min-width: 160px;
 }
 
-.vacancy-actions {
-  margin-top: 1rem;
-  display: flex;
-  gap: 0.5rem;
+.vacancies-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2rem;
+}
+
+.vacancy-actions .btn {
+  min-width: 120px;
+}
+
+.btn-edit {
+  background: var(--warning);
+  color: #fff;
+  font-weight: 700;
+  border: none;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(243,156,18,0.14);
+  transition: background 0.3s, box-shadow 0.3s, transform 0.2s;
+}
+.btn-edit:hover, .btn-edit:focus {
+  background: #f1c40f;
+  color: #fff;
+  box-shadow: 0 4px 24px 0 rgba(243,156,18,0.22);
+  transform: scale(1.045);
 }
 
 .btn-sm {
@@ -84,9 +108,11 @@ onMounted(async () => {
   font-size: 0.9rem;
 }
 
-.btn-edit {
-  background: var(--warning);
-  color: white;
+.vacancy-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
 }
 
 .status-badge {
