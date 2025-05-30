@@ -1,0 +1,22 @@
+@startuml
+actor Manager
+participant "API /api/vacancies/" as API
+participant "VacancyViewSet" as ViewSet
+participant "VacancySerializer" as Serializer
+participant "DB (Vacancy)" as DB
+
+Manager -> API: POST /api/vacancies/ (title, description, JWT)
+API -> ViewSet: create(request)
+ViewSet -> Serializer: validate(data)
+alt valid
+    Serializer -> DB: create vacancy
+    DB --> Serializer: vacancy instance
+    Serializer --> ViewSet: vacancy data
+    ViewSet --> API: 201 Created + vacancy
+    API --> Manager: 201 Created + vacancy
+else invalid
+    Serializer --> ViewSet: errors
+    ViewSet --> API: 400 Bad Request + errors
+    API --> Manager: 400 Bad Request + errors
+end
+@enduml 

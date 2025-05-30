@@ -1,0 +1,20 @@
+@startuml
+actor Manager
+participant "API /api/candidates/{id}/update_tech_comment/" as API
+participant "CandidateViewSet" as ViewSet
+participant "DB (Candidate)" as DB
+
+Manager -> API: PATCH /api/candidates/{id}/update_tech_comment/ (JWT, tech_comment)
+API -> ViewSet: update_tech_comment(request, id)
+ViewSet -> DB: get candidate by id
+DB --> ViewSet: candidate
+alt MANAGER
+    ViewSet -> DB: update tech_comment
+    DB --> ViewSet: updated candidate
+    ViewSet --> API: {status: tech_comment_updated}
+    API --> Manager: 200 OK + status
+else not allowed
+    ViewSet --> API: error
+    API --> Manager: 403 Forbidden + error
+end
+@enduml 

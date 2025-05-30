@@ -1,0 +1,18 @@
+@startuml
+actor User
+participant "API /api/auth/register/" as API
+participant "UserSerializer" as Serializer
+participant "DB (User)" as DB
+
+User -> API: POST /api/auth/register/ (email, password, role)
+API -> Serializer: validate(data)
+alt valid
+    Serializer -> DB: create user
+    DB --> Serializer: user instance
+    Serializer --> API: user data
+    API --> User: 201 Created + user data
+else invalid
+    Serializer --> API: errors
+    API --> User: 400 Bad Request + errors
+end
+@enduml 

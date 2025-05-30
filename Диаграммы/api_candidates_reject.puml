@@ -1,0 +1,25 @@
+@startuml
+actor User
+participant "API /api/candidates/{id}/reject/" as API
+participant "CandidateViewSet" as ViewSet
+participant "DB (Candidate)" as DB
+
+User -> API: POST /api/candidates/{id}/reject/ (JWT, comment)
+API -> ViewSet: reject(request, id)
+ViewSet -> DB: get candidate by id
+DB --> ViewSet: candidate
+alt HR & статус HR_INTERVIEW
+    ViewSet -> DB: update status to HR_REJECTED, set hr_comment
+    DB --> ViewSet: updated candidate
+    ViewSet --> API: {status: rejected}
+    API --> User: 200 OK + status
+else MANAGER
+    ViewSet -> DB: update status to REJECTED, set tech_comment
+    DB --> ViewSet: updated candidate
+    ViewSet --> API: {status: rejected}
+    API --> User: 200 OK + status
+else not allowed
+    ViewSet --> API: error
+    API --> User: 403 Forbidden + error
+end
+@enduml 

@@ -1,0 +1,13 @@
+@startuml
+actor User
+participant "API /api/vacancies/" as API
+participant "VacancyViewSet" as ViewSet
+participant "DB (Vacancy)" as DB
+
+User -> API: GET /api/vacancies/ (JWT)
+API -> ViewSet: get_queryset(user)
+ViewSet -> DB: query vacancies (role-based)
+DB --> ViewSet: vacancies list
+ViewSet --> API: serialized vacancies
+API --> User: 200 OK + vacancies
+@enduml 

@@ -1,0 +1,22 @@
+@startuml
+actor HR
+participant "API /api/candidates/" as API
+participant "CandidateViewSet" as ViewSet
+participant "CandidateSerializer" as Serializer
+participant "DB (Candidate)" as DB
+
+HR -> API: POST /api/candidates/ (full_name, email, vacancy_id, JWT)
+API -> ViewSet: create(request)
+ViewSet -> Serializer: validate(data)
+alt valid
+    Serializer -> DB: create candidate
+    DB --> Serializer: candidate instance
+    Serializer --> ViewSet: candidate data
+    ViewSet --> API: 201 Created + candidate
+    API --> HR: 201 Created + candidate
+else invalid
+    Serializer --> ViewSet: errors
+    ViewSet --> API: 400 Bad Request + errors
+    API --> HR: 400 Bad Request + errors
+end
+@enduml 

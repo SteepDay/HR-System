@@ -1,0 +1,18 @@
+@startuml
+actor User
+participant "API /api/auth/login/" as API
+participant "CustomTokenObtainPairSerializer" as Serializer
+participant "DB (User)" as DB
+
+User -> API: POST /api/auth/login/ (email, password)
+API -> Serializer: validate(data)
+Serializer -> DB: find user by email
+DB --> Serializer: user instance
+alt valid credentials
+    Serializer -> API: access, refresh, email, role, user_id
+    API --> User: 200 OK + tokens + user info
+else invalid
+    Serializer -> API: errors
+    API --> User: 401 Unauthorized + errors
+end
+@enduml 
