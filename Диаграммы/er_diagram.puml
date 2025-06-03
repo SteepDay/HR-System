@@ -1,0 +1,37 @@
+@startuml
+
+entity "User" as User {
+  * id : bigint
+  * email : varchar
+  * password : varchar
+  * role : varchar (HR | MANAGER)
+}
+
+entity "Vacancy" as Vacancy {
+  * id : bigint
+  * title : varchar
+  * description : text
+  * status : varchar (OPEN | CLOSED)
+  * created_by : User
+  * created_at : datetime
+}
+
+entity "Candidate" as Candidate {
+  * id : bigint
+  * full_name : varchar
+  * email : varchar
+  * phone : varchar
+  * status : varchar (HR, HR_NO, TECH, TECH_NO, FINAL, HIRED, REJECTED)
+  * hr_comment : text
+  * tech_comment : text
+  * vacancy : Vacancy
+  * created_by : User
+  * created_at : datetime
+  * updated_at : datetime
+}
+
+User ||--o{ Vacancy : "создаёт >"
+Vacancy ||--o{ Candidate : "имеет >"
+User ||--o{ Candidate : "добавляет >"
+
+@enduml 
