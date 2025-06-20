@@ -1,0 +1,68 @@
+@startuml
+
+left to right direction
+
+actor HR as "HR-специалист"
+actor Manager as "Менеджер"
+actor Applicant as "Кандидат"
+
+rectangle "HR-система" {
+
+  (Регистрация) as UC_Register
+  (Вход в систему) as UC_Login
+
+  (Просмотр вакансий) as UC_ViewVacancies
+  (Создание вакансии) as UC_CreateVacancy
+  (Редактирование вакансии) as UC_EditVacancy
+  (Публикация/закрытие вакансии) as UC_PublishVacancy
+  (Удаление вакансии) as UC_DeleteVacancy
+
+  (Просмотр кандидатов) as UC_ViewCandidates
+  (Добавление кандидата) as UC_AddCandidate
+  (Редактирование кандидата) as UC_EditCandidate
+  (Удаление кандидата) as UC_DeleteCandidate
+  (Смена статуса кандидата) as UC_ChangeCandidateStatus
+  (Добавление HR-комментария) as UC_AddHRComment
+  (Добавление тех. комментария) as UC_AddTechComment
+
+  (Просмотр аналитики) as UC_ViewAnalytics
+
+  (Получение email-уведомлений) as UC_ReceiveEmail
+
+  ' Аутентификация
+  HR -- UC_Register
+  HR -- UC_Login
+  Manager -- UC_Register
+  Manager -- UC_Login
+
+  ' Вакансии
+  HR -- UC_ViewVacancies
+  Manager -- UC_ViewVacancies
+  Manager -- UC_CreateVacancy
+  Manager -- UC_EditVacancy
+  Manager -- UC_PublishVacancy
+  Manager -- UC_DeleteVacancy
+
+  ' Кандидаты
+  HR -- UC_ViewCandidates
+  HR -- UC_AddCandidate
+  HR -- UC_EditCandidate
+  HR -- UC_DeleteCandidate
+  HR -- UC_ChangeCandidateStatus
+  HR -- UC_AddHRComment
+
+  Manager -- UC_ViewCandidates
+  Manager -- UC_ChangeCandidateStatus
+  Manager -- UC_AddTechComment
+
+  ' Аналитика
+  HR -- UC_ViewAnalytics
+  Manager -- UC_ViewAnalytics
+
+  ' Уведомления
+  UC_ChangeCandidateStatus --> UC_ReceiveEmail : <<include>>
+  Applicant -- UC_ReceiveEmail
+
+}
+
+@enduml 
